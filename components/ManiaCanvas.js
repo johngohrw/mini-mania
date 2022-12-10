@@ -1,34 +1,51 @@
 import React, { useRef, useEffect } from "react";
 import testSong from "../public/songs/Dormir - Sayonara Trip/Dormir - Sayonara Trip (Simple_Star) [4K LV.5].json";
+import { convertNotes } from "../utils/notes";
 
 const ManiaCanvas = (props) => {
   const canvasRef = useRef(null);
   const notes = convertNotes(testSong.notes);
-  // const song = new Audio("/songs/Dormir - Sayonara Trip/Sayonara Trip.mp3");
-  // console.log("s", song);
 
-  const draw = (ctx, frameCount) => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.fillStyle = "#000000";
-    ctx.beginPath();
-    ctx.arc(50, 100, 20 * Math.sin(frameCount * 0.05) ** 2, 0, 2 * Math.PI);
-    ctx.fill();
+  const drawNotes = (ctx, time, notes, speed, yOffset) => {
+    Object.values(notes).forEach((note) => {
+      const dt = time - note.t_hit;
+      const x = note.x;
+      const dy = dt * speed * 0.05;
+      ctx.fillRect(note.x / 2, dy + yOffset, 48, 10);
+    });
   };
-
-  const drawNotes = (ctx, frameCount, time, notes) => {};
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
-    let frameCount = 0;
+    let frameCount = 0,
+      audioTime = 0;
     let animationFrameId;
-    console.log(performance);
+    let yOffset = context.canvas.height - 10;
+    let scrollSpeed = 25;
+    let audio = new Audio("./songs/Dormir - Sayonara Trip/Sayonara Trip.mp3");
+    console.log(audio);
+
+    // start audio when ready to play
+    audio.addEventListener("canplay", (event) => {
+      audio.play();
+    });
 
     //Our draw came here
     const render = () => {
       frameCount++;
+      if (frameCount % 120 === 0) {
+        console.log(frameCount / 120);
+      }
 
-      drawNotes(context, frameCount, 0, notes);
+      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+      context.fillStyle = "#000000";
+      audioTime = audio.currentTime * 1000;
+
+      if (notes) {
+        drawNotes(context, audioTime, notes, scrollSpeed, yOffset);
+      }
+
       animationFrameId = window.requestAnimationFrame(render);
     };
     render();
@@ -38,15 +55,15 @@ const ManiaCanvas = (props) => {
     return () => {
       window.cancelAnimationFrame(animationFrameId);
     };
-  }, [draw]);
+  }, [drawNotes]);
 
   return (
     <>
-      <canvas ref={canvasRef} {...props} />
+      <canvas width={1280} height={800} ref={canvasRef} {...props} />
       <style jsx>{`
         canvas {
-          height: 500px;
-          width: 500px;
+          width: 1280px;
+          height: 800px;
         }
       `}</style>
     </>
@@ -54,8 +71,3 @@ const ManiaCanvas = (props) => {
 };
 
 export default ManiaCanvas;
-
-
-// console.log(testSong);
-// const notes = convertNotes(testSong.notes);
-// console.log(notes);
