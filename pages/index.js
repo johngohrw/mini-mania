@@ -10,7 +10,7 @@ export default function Home() {
       </Head>
 
       <main>
-        <h1 className="title">canvas</h1>
+        <h1 className="title">a canvas experiment</h1>
 
         <div className="gameContainer">
           <ManiaCanvas />
