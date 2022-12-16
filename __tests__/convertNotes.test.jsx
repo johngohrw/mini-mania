@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { convertNotes } from "../utils/notes";
+import { convertNotes } from "../game/notes";
 
 // note conversion from string[] to Note Array type
 test("note conversion", () => {

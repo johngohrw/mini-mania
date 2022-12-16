@@ -1,45 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
-import testSong from "../public/songs/Dormir - Sayonara Trip/Dormir - Sayonara Trip (Simple_Star) [4K LV.5].json";
-import loosSong from "../public/songs/128855 Loos - Koi Yomi Zakura/Loos - Koi Yomi Zakura (_S u w a k o_) [7K Lv.36].json";
-import yoasobiYoruNiKakeruSong from "../public/songs/1299810 YOASOBI - Yoru ni Kakeru/YOASOBI - Yoru ni Kakeru (arcwinolivirus) [7K Blind My Sight].json";
-import { convertNotes } from "../utils/notes";
-
-const song = {
-  notes: convertNotes(testSong.notes),
-  audioUrl: "./songs/Dormir - Sayonara Trip/Sayonara Trip.mp3",
-};
-
-const song2 = {
-  notes: convertNotes(loosSong.notes, 70),
-  audioUrl: "./songs/128855 Loos - Koi Yomi Zakura/loos - Omoi Yoshino.mp3",
-};
-
-const song3 = {
-  notes: convertNotes(yoasobiYoruNiKakeruSong.notes, 70),
-  audioUrl: "./songs/1299810 YOASOBI - Yoru ni Kakeru/audio.mp3",
-};
 
 const gameOptions = {
-  scrollSpeed: 20,
-  song: song3,
-  volume: 0.2,
+  song: null,
 };
 
 const skinOptions = {
   judgePos: 50,
   noteWidth: 40,
-};
-
-const keymap = {
-  7: {
-    1: "s",
-    2: "d",
-    3: "f",
-    4: " ",
-    5: "j",
-    6: "k",
-    7: "l",
-  },
 };
 
 const laneColorMap = {
@@ -60,34 +27,6 @@ const getInverseMap = (obj, transform = (val) => val) => {
     return acc;
   }, {});
 };
-
-class GameController {
-  constructor({ overlay }) {
-    this.overlay = overlay;
-    this.overlayContext = this.overlay.getContext("2d");
-    this.keymap = getInverseMap(keymap[7], (val) => parseInt(val));
-    this.activeCols = {
-      1: false,
-      2: false,
-      3: false,
-      4: false,
-      5: false,
-      6: false,
-      7: false,
-    };
-
-    document.addEventListener("keydown", (e) => {
-      if (this.keymap[e.key]) {
-        this.activeCols[this.keymap[e.key]] = true;
-      }
-    });
-    document.addEventListener("keyup", (e) => {
-      if (this.keymap[e.key]) {
-        this.activeCols[this.keymap[e.key]] = false;
-      }
-    });
-  }
-}
 
 const ManiaCanvas = (props) => {
   const playfieldBgRef = useRef(null);
@@ -185,7 +124,7 @@ const playfield = (ref) => {
   let frameCount = 0;
   let context = canvas.getContext("2d");
   let notes = gameOptions.song.notes;
-  let audio = new Audio(gameOptions.song.audioUrl);
+  // let audio = new Audio(gameOptions.song.audioUrl);
   let { scrollSpeed, volume } = gameOptions;
   let { noteWidth } = skinOptions;
   audio.volume = volume;
@@ -221,8 +160,10 @@ const playfield = (ref) => {
       timeStep.forEach((note) => {
         let dt = time - note.t_hit;
         let dy = dt * 0.05 * scrollSpeed + canvas.height;
-        context.fillStyle = laneColorMap[7][note.col];
-        context.fillRect((note.col - 1) * noteWidth, dy, noteWidth, 10);
+        if (dy > -100) {
+          context.fillStyle = laneColorMap[7][note.col];
+          context.fillRect((note.col - 1) * noteWidth, dy, noteWidth, 10);
+        }
       });
     });
 
@@ -282,8 +223,8 @@ const playfieldBg = (ref) => {
 
   const render = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(20, 20, 20, 1)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height - judgePos);
+    // ctx.fillStyle = "rgba(20, 20, 20, 1)";
+    // ctx.fillRect(0, 0, canvas.width, canvas.height - judgePos);
 
     animationFrame = window.requestAnimationFrame(render);
   };
