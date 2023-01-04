@@ -11,6 +11,11 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
   const gameFgRef = useRef(null);
   const [gamePaused, setGamePaused] = useState(true);
   const [game, setGame] = useState(null);
+  const [scrollSpeed, setScrollSpeed] = useState(20);
+
+  useEffect(() => {
+    game?.adjustOption("scrollSpeed", scrollSpeed);
+  }, [scrollSpeed]);
 
   // initialise game controller
   useEffect(() => {
@@ -21,7 +26,7 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
         bgCanvas: gameBgRef.current,
         gameCanvas: gameRef.current,
         songInfo: songInfo,
-        initialOptions: { gameVolume: 0.1, scrollSpeed: 20 }, // test
+        initialOptions: { gameVolume: 0.1, scrollSpeed: scrollSpeed }, // test
       });
       setGame(g);
     }
@@ -34,6 +39,10 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
 
   return (
     <>
+      scrollSpeed{" "}
+      <button onClick={() => setScrollSpeed(scrollSpeed - 3)}>-</button>
+      {scrollSpeed}
+      <button onClick={() => setScrollSpeed(scrollSpeed + 3)}>+</button>
       <button
         onClick={() => {
           setGamePaused(!gamePaused);
@@ -62,7 +71,6 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
           ref={gameRef}
         />
       </div>
-
       <style jsx>{`
         #stage {
           width: 800px;

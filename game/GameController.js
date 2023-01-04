@@ -31,6 +31,7 @@ export class GameController {
     });
     this.audio = audio;
     this.audio.volume = this.options.gameVolume;
+    this.isPlaying = !this.audio.paused;
 
     // init canvas contexts
     this.fg = fgCanvas;
@@ -94,6 +95,10 @@ export class GameController {
     if (this.keymap[e.key]) {
       this.feedback.activeCols[this.keymap[e.key]] = false;
     }
+  }
+
+  adjustOption(key, value) {
+    this.options[key] = value;
   }
 
   render() {
