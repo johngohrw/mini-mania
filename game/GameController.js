@@ -22,7 +22,6 @@ export class GameController {
     this.keymap = getInverseMap(this.options.keyMaps[songInfo["keys"]], (val) =>
       parseInt(val)
     );
-    console.log(">", this.keymap);
 
     // init audio
     const { instance: audio } = new AudioProvider({
@@ -109,8 +108,10 @@ export class GameController {
     this.fgCtx.clearRect(0, 0, this.fg.width, this.fg.height);
     this.bgCtx.clearRect(0, 0, this.bg.width, this.bg.height);
 
-    this.NoteFactory.draw(this.gameTime);
+    this.NoteFactory.draw(this.gameTime, this.frameCount);
     this.feedback.draw();
+
+    // this.fgCtx.fillText("test", 0, 0);
 
     this.animationFrame = window.requestAnimationFrame(this.render.bind(this));
   }

@@ -3,28 +3,41 @@
 const LOOKAHEAD_TIME = 5000;
 
 export class NoteFactory {
-  constructor({ songInfo, canvas, options, audio, skin }) {
+  constructor({
+    songInfo,
+    canvas,
+    options,
+    audio,
+    skin,
+    lookaheadDuration = LOOKAHEAD_TIME,
+  }) {
     console.log("[NoteFactory] initializing notes...", songInfo, canvas);
     this.options = options;
     this.audio = audio;
     this.skin = skin;
     this.songInfo = songInfo;
     this.notes = songInfo.notes;
-    this.songNotesArray = Object.values(songInfo.notes);
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
     this.animationFrame;
+    this.lookaheadDuration = lookaheadDuration;
 
-    // notes to render. periodically updated (not every frame).
-    this.renderQueue = {};
+    // renderQueue array
+    this.renderQueue = Object.values(songInfo.notes);
 
-    // initial lookahead, adds first notes to render queue.
-    this.updateRenderQueue(0, LOOKAHEAD_TIME);
+    // start/end pointers for renderable notes
+    this.renderStartPtr = 0;
+    this.renderEndPtr = 0;
+    this.renderableNoteCount = 0;
+
+    // initial lookahead, updates start/end pointers.
+    this.updateRenderableNotes(0, this.lookaheadDuration);
   }
 
-  // draw notes on canvas
-  draw(gameTime) {
-    this.songNotesArray.forEach((timeStep) => {
+  // draw notes on canvas in-between start-end pointers.
+  draw(gameTime, frameCount) {
+    for (let i = this.renderStartPtr; i < this.renderEndPtr; i++) {
+      const timeStep = this.renderQueue[i];
       // each timeStep might consist of multiple notes (chords)
       timeStep.forEach((note) => {
         let dt = gameTime - note.t_hit;
@@ -40,18 +53,44 @@ export class NoteFactory {
           );
         }
       });
-    });
+    }
 
-    // update render queue if needed.
-    // checks next note with lookahead time.
-    this.updateRenderQueue(gameTime, gameTime + LOOKAHEAD_TIME);
+    // update renderable notes if needed.
+    if (frameCount % 60 === 0) {
+      this.updateRenderableNotes(gameTime, this.lookaheadDuration);
+    }
   }
 
-  // based on the current time and the lookahead, add in more notes to the render queue
-  updateRenderQueue(time, lookahead) {
-    console.log();
+  // Based on the current time and the lookahead, add in more notes to the render queue.
+  // Also updates the startPointer based on gameTime.
+  // Can be called infrequently to boost performance (instead of every frame).
+  updateRenderableNotes(currTime, lookaheadDuration) {
+    console.log("updateRenderableNotes", currTime);
+    const lookaheadTime = currTime + lookaheadDuration;
+
+    // add in more notes, incrementing renderEndPtr
+    while (
+      this.renderEndPtr < this.renderQueue.length &&
+      this.renderQueue[this.renderEndPtr][0].t_hit < lookaheadTime
+    ) {
+      this.renderEndPtr++;
+    }
+
+    // check for stale notes, incrementing renderStartPtr
+    while (
+      this.renderStartPtr < this.renderQueue.length &&
+      this.renderQueue[this.renderStartPtr][0].t_hit < currTime
+    ) {
+      this.renderStartPtr++;
+    }
+
+    this.renderableNoteCount = this.renderEndPtr - this.renderStartPtr;
   }
 
-  // remove a particular note (after hitting it or when it's past the render distance(?))
-  removeNote() {}
+  // manual note state reset
+  resetNotes() {
+    this.renderQueuePointer = 0;
+    this.notesToRender = [];
+    this.notesToRenderPointer = 0;
+  }
 }

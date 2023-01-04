@@ -39,9 +39,9 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
   return (
     <>
       scrollSpeed{" "}
-      <button onClick={() => setScrollSpeed(scrollSpeed - 3)}>-</button>
+      <button onClick={() => setScrollSpeed(scrollSpeed - 2)}>-</button>
       {scrollSpeed}
-      <button onClick={() => setScrollSpeed(scrollSpeed + 3)}>+</button>
+      <button onClick={() => setScrollSpeed(scrollSpeed + 2)}>+</button>
       <button
         onClick={() => {
           setGamePaused(!gamePaused);
