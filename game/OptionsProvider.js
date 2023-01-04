@@ -1,6 +1,6 @@
 export class OptionsProvider {
   constructor(options) {
-    this.options = {...defaultOptions, ...options}
+    this.options = { ...defaultOptions, ...options };
     this.defaults = defaultOptions;
     // game volume, both song and ingame.
     this.gameVolume = options?.gameVolume || this.defaults.gameVolume;
@@ -52,13 +52,13 @@ const defaultOptions = {
       5: "l",
     },
     7: {
-      0: "s",
-      1: "d",
-      2: "f",
-      3: " ",
-      4: "j",
-      5: "k",
-      6: "l",
+      1: "s",
+      2: "d",
+      3: "f",
+      4: " ",
+      5: "j",
+      6: "k",
+      7: "l",
     },
   },
   gameVolume: 0.5,

@@ -40,3 +40,10 @@ export function convertNotes(notesArray, quantize = 0) {
   }
   return result;
 }
+
+export const getInverseMap = (obj, transform = (val) => val) => {
+  return Object.entries(obj).reduce((acc, [k, v]) => {
+    acc[v] = transform(k);
+    return acc;
+  }, {});
+};

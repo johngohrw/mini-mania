@@ -13,7 +13,7 @@ export default function Home() {
         <h1 className="title">a canvas experiment</h1>
 
         <div className="gameContainer">
-          {/* <ManiaCanvas /> */}
+          <ManiaCanvas />
         </div>
       </main>
 
