@@ -13,6 +13,11 @@ export class GameController {
     this.gameTime = 0;
     this.animationFrame;
 
+    // fps calculation vars
+    this.fps;
+    this.lastRender;
+    this.delta;
+
     // init skin
     this.skin = new SkinProvider({});
 
@@ -47,14 +52,22 @@ export class GameController {
       options: this.options,
       audio: this.audio,
       skin: this.skin,
+      naive: false,
     });
 
     // init feedback
-    this.feedback = new FeedbackRenderer({ canvas: this.fg, skin: this.skin });
+    this.feedback = new FeedbackRenderer({
+      canvas: this.fg,
+      skin: this.skin,
+      keyCount: songInfo.keys,
+    });
 
     // bind keypress events
     document.addEventListener("keydown", this.onKeyDown.bind(this));
     document.addEventListener("keyup", this.onKeyUp.bind(this));
+
+    // prerender setup code
+    this.prerender();
 
     // start render loop
     this.render();
@@ -100,8 +113,20 @@ export class GameController {
     this.options[key] = value;
   }
 
+  prerender() {
+    this.fgCtx.fillStyle = "Black";
+    this.fgCtx.font = "normal 16pt Arial";
+  }
+
   render() {
     this.frameCount++;
+
+    // fps calculation
+    const now = performance.now();
+    this.delta = now - this.lastRender;
+    this.fps = 1000 / this.delta;
+    this.lastRender = now;
+    this.fgCtx.fillText("test" + this.fps, 10, 26);
 
     this.gameTime = this.audio.currentTime * 1000;
     this.gameCtx.clearRect(0, 0, this.game.width, this.game.height);
@@ -110,8 +135,7 @@ export class GameController {
 
     this.NoteFactory.draw(this.gameTime, this.frameCount);
     this.feedback.draw();
-
-    // this.fgCtx.fillText("test", 0, 0);
+    this.skin.drawJudge({ canvas: this.bg });
 
     this.animationFrame = window.requestAnimationFrame(this.render.bind(this));
   }

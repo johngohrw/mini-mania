@@ -11,6 +11,9 @@ const defaultLaneColorMap = {
 };
 
 const defaultBgColor = "rgb(0, 0, 0)";
+const defaultJudgePos = 250;
+const defaultNoteWidth = 40;
+const defaultNoteHeight = 10;
 
 export class SkinProvider {
   constructor({
@@ -18,10 +21,22 @@ export class SkinProvider {
     bgColor = defaultBgColor,
   }) {
     console.log("[SkinProvider] initialising skin...");
-    this.noteWidth = 40;
-    this.judgePos = 50;
+    this.noteWidth = defaultNoteWidth;
+    this.noteHeight = defaultNoteHeight;
+    this.judgePos = defaultJudgePos;
     this.laneColors = objectSpreader(defaultLaneColorMap, laneColorMap);
     this.playfieldBgColor = bgColor || defaultBgColor;
+  }
+
+  drawJudge({ canvas, keyCount = 7 }) {
+    const context = canvas.getContext("2d");
+    context.fillStyle = "rgb(255, 0, 0)";
+    context.fillRect(
+      0,
+      canvas.height - this.judgePos,
+      keyCount * this.noteWidth,
+      10
+    );
   }
 }
 
