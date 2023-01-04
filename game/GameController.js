@@ -1,6 +1,6 @@
 import { NoteFactory } from "./NoteFactory";
 import { OptionsProvider } from "./OptionsProvider";
-import { AudioProvider } from "./audioProvider";
+import { AudioProvider } from "./AudioProvider";
 import { SkinProvider } from "../game/SkinProvider";
 import { getInverseMap } from "./notes";
 import { FeedbackRenderer } from "./FeedbackRenderer";

@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import { GameController } from "../game/GameController";
-import { AudioProvider } from "../game/audioProvider";
 import { songs } from "../data/songs";
 
 let mockSongInfo = songs[3];
