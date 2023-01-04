@@ -31,7 +31,8 @@ export class GameController {
     // init audio
     const { instance: audio } = new AudioProvider({
       url: songInfo.url,
-      onCanPlayFunction: () => console.log("canplaydy"),
+      onCanPlayFunction: () =>
+        console.log("onCanPlayFunction. do something with this."), // TODO
     });
     this.audio = audio;
     this.audio.volume = this.options.gameVolume;
@@ -114,26 +115,18 @@ export class GameController {
   }
 
   prerender() {
-    this.fgCtx.fillStyle = "Black";
-    this.fgCtx.font = "normal 16pt Arial";
+    this.fgCtx.font = "normal 12pt Arial";
+    this.gameCtx.font = "normal 8pt Arial";
   }
 
   render() {
     this.frameCount++;
-
-    // fps calculation
-    const now = performance.now();
-    this.delta = now - this.lastRender;
-    this.fps = 1000 / this.delta;
-    this.lastRender = now;
-    this.fgCtx.fillText("test" + this.fps, 10, 26);
-
-    this.gameTime = this.audio.currentTime * 1000;
+    this.gameTime = Math.floor(this.audio.currentTime * 1000);
     this.gameCtx.clearRect(0, 0, this.game.width, this.game.height);
     this.fgCtx.clearRect(0, 0, this.fg.width, this.fg.height);
-    this.bgCtx.clearRect(0, 0, this.bg.width, this.bg.height);
+    // this.bgCtx.clearRect(0, 0, this.bg.width, this.bg.height);
 
-    this.NoteFactory.draw(this.gameTime, this.frameCount);
+    this.NoteFactory.draw(this.gameTime);
     this.feedback.draw();
     this.skin.drawJudge({ canvas: this.bg });
 

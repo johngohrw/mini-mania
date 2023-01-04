@@ -11,7 +11,7 @@ const defaultLaneColorMap = {
 };
 
 const defaultBgColor = "rgb(0, 0, 0)";
-const defaultJudgePos = 250;
+const defaultJudgePos = 70;
 const defaultNoteWidth = 40;
 const defaultNoteHeight = 10;
 

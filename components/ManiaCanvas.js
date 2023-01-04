@@ -10,7 +10,7 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
   const gameFgRef = useRef(null);
   const [gamePaused, setGamePaused] = useState(true);
   const [game, setGame] = useState(null);
-  const [scrollSpeed, setScrollSpeed] = useState(2);
+  const [scrollSpeed, setScrollSpeed] = useState(10);
 
   useEffect(() => {
     game?.adjustOption("scrollSpeed", scrollSpeed);
@@ -33,23 +33,30 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
     // call unmount callback
     return () => {
       g?.unmountGame();
+      setGamePaused(true);
     };
   }, [gameFgRef, gameRef]);
 
   return (
     <>
-      scrollSpeed{" "}
-      <button onClick={() => setScrollSpeed(scrollSpeed - 1)}>-</button>
-      {scrollSpeed}
-      <button onClick={() => setScrollSpeed(scrollSpeed + 1)}>+</button>
-      <button
-        onClick={() => {
-          setGamePaused(!gamePaused);
-          game?.gameTogglePausePlay();
-        }}
-      >
-        {gamePaused ? "play" : "pause"}
-      </button>
+      <div className="options">
+        <button onClick={() => {}}>change song (not working yet)</button>
+        <div>
+          scrollSpeed{" "}
+          <button onClick={() => setScrollSpeed(scrollSpeed - 1)}>-</button>{" "}
+          {scrollSpeed}{" "}
+          <button onClick={() => setScrollSpeed(scrollSpeed + 1)}>+</button>
+        </div>
+        <button
+          onClick={() => {
+            setGamePaused(!gamePaused);
+            game?.gameTogglePausePlay();
+          }}
+        >
+          {gamePaused ? "play" : "pause"}
+        </button>
+      </div>
+
       <div id="stage">
         <canvas
           id="playfieldBg"
@@ -71,11 +78,15 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
         />
       </div>
       <style jsx>{`
+        .options {
+          margin-bottom: 1rem;
+        }
         #stage {
-          width: 800px;
           height: 640px;
+          width: 280px;
           position: relative;
           border: 1px solid black;
+          box-sizing: content-box;
         }
         canvas {
           position: absolute;
@@ -88,7 +99,6 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
         }
         #playfieldOverlay {
           z-index: 3;
-          border-right: 1px solid black;
         }
       `}</style>
     </>

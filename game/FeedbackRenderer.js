@@ -5,8 +5,6 @@ export class FeedbackRenderer {
     this.skin = skin;
     this.keyCount = keyCount;
 
-    console.log("this.skin.laneColors");
-
     // init activeCols to {0: false, 1: false, ...}
     this.activeCols = Array(keyCount)
       .fill(null)
@@ -19,15 +17,25 @@ export class FeedbackRenderer {
 
   // render feedback effects on canvas
   draw() {
+    // key bg
+    this.context.fillStyle = "rgb(150, 150, 150)";
+
+    this.context.fillRect(
+      0, // refactor this to skin.playfieldLeftPos
+      this.canvas.height - this.skin.judgePos + this.skin.noteHeight,
+      this.skin.noteWidth * this.keyCount,
+      this.skin.judgePos + this.skin.noteHeight
+    );
+
     // interactive piano keys
     Object.values(this.activeCols).forEach((col, i) => {
       if (col) {
         this.context.fillStyle = this.skin.laneColors[this.keyCount][i + 1];
         this.context.fillRect(
           this.skin.noteWidth * i,
-          this.canvas.height - this.skin.judgePos,
+          this.canvas.height - this.skin.judgePos + this.skin.noteHeight,
           this.skin.noteWidth,
-          50 // note keys height. refactor this later.
+          this.skin.judgePos + this.skin.noteHeight // note keys height. refactor this later.
         );
       }
     });

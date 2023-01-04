@@ -33,7 +33,7 @@ export default function Home() {
         }
 
         .gameContainer {
-          border: 1px solid black;
+          box-sizing: border-box;
         }
       `}</style>
 
