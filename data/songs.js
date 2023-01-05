@@ -6,12 +6,19 @@ import yoasobiYoruNiKakeruSong from "../public/songs/1299810 YOASOBI - Yoru ni K
 import lapisSong from "../public/songs/1652458 SHIKI - Lapis/SHIKI - Lapis (-NoName-) [Another].json";
 
 export const songs = {
+  0: {
+    name: "Yoru ni Kakeru",
+    artist: "YOASOBI",
+    notes: convertNotes(yoasobiYoruNiKakeruSong.notes, 70),
+    url: "./songs/1299810 YOASOBI - Yoru ni Kakeru/audio.mp3",
+    keys: 7,
+  },
   1: {
     name: "Sayonara Trip",
     artist: "Dormir",
     notes: convertNotes(testSong.notes),
     url: "./songs/Dormir - Sayonara Trip/Sayonara Trip.mp3",
-    keys: 4,
+    keys: 7,
   },
   2: {
     name: "Koi Yomi Zakura",
@@ -21,13 +28,6 @@ export const songs = {
     keys: 7,
   },
   3: {
-    name: "Yoru ni Kakeru",
-    artist: "YOASOBI",
-    notes: convertNotes(yoasobiYoruNiKakeruSong.notes, 70),
-    url: "./songs/1299810 YOASOBI - Yoru ni Kakeru/audio.mp3",
-    keys: 7,
-  },
-  4: {
     name: "Lapis",
     artist: "SHIKI",
     notes: convertNotes(lapisSong.notes),

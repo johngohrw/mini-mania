@@ -1,12 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
 import { GameController } from "../game/GameController";
-import { songs } from "../data/songs";
+
 import { SkinProvider } from "../game/SkinProvider";
 
-let mockSongInfo = songs[3];
 const skin = new SkinProvider({});
 
-const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
+const ManiaCanvas = ({ songInfo, ...rest }) => {
   const gameBgRef = useRef(null);
   const gameRef = useRef(null);
   const gameFgRef = useRef(null);
@@ -47,7 +46,7 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
       g?.unmountGame();
       setGamePaused(true);
     };
-  }, [gameFgRef, gameRef]);
+  }, [gameFgRef, gameRef, songInfo]);
 
   return (
     <>
