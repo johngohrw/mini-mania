@@ -29,7 +29,6 @@ export class AudioProvider {
   }
 
   setAudioAttribute(key, value) {
-    console.log("val", value);
     this.instance[key] = value;
   }
 }
