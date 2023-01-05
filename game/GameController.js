@@ -33,12 +33,14 @@ export class GameController {
     );
 
     // init audio
-    const { instance: audio } = new AudioProvider({
+    const audioClass = new AudioProvider({
       url: songInfo.url,
       onCanPlayFunction: () =>
         console.log("onCanPlayFunction. do something with this."), // TODO
     });
-    this.audio = audio;
+
+    this.audioClass = audioClass;
+    this.audio = audioClass.instance;
     this.audio.volume = this.options.gameVolume;
     this.isPlaying = !this.audio.paused;
 
@@ -78,20 +80,11 @@ export class GameController {
     this.render();
   }
 
-  gameStart() {
-    console.log("[GameController] game start");
-    this.audio?.play();
-  }
-
-  gamePause() {
-    this.audio?.pause();
-  }
-
-  gameTogglePausePlay() {
-    if (this.audio?.paused) {
-      this.audio?.play();
-    } else {
+  gameSetPaused(paused) {
+    if (paused) {
       this.audio?.pause();
+    } else {
+      this.audio?.play();
     }
   }
 

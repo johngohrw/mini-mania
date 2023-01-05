@@ -23,4 +23,13 @@ export class AudioProvider {
 
   // pauses the song
   pause() {}
+
+  getNode() {
+    return this.instance;
+  }
+
+  setAudioAttribute(key, value) {
+    console.log("val", value);
+    this.instance[key] = value;
+  }
 }

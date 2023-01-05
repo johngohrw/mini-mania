@@ -6,15 +6,19 @@ import { SkinProvider } from "../game/SkinProvider";
 const gameScale = 2;
 const skin = new SkinProvider({ gameScale: 1 });
 
-const ManiaCanvas = ({ songInfo, ...rest }) => {
+const ManiaCanvas = ({
+  songInfo,
+  debugMode,
+  scrollSpeed = 10,
+  slanted,
+  volume = 0.2,
+  paused,
+  ...rest
+}) => {
   const gameBgRef = useRef(null);
   const gameRef = useRef(null);
   const gameFgRef = useRef(null);
-  const [gamePaused, setGamePaused] = useState(true);
   const [game, setGame] = useState(null);
-  const [debugMode, setDebugMode] = useState(false);
-  const [scrollSpeed, setScrollSpeed] = useState(10);
-  const [slanted, setSlanted] = useState(true);
 
   const gameWidth = skin?.noteWidth * songInfo?.keys;
   const gameHeight = 640;
@@ -27,6 +31,14 @@ const ManiaCanvas = ({ songInfo, ...rest }) => {
     game?.set("debug", debugMode);
   }, [debugMode]);
 
+  useEffect(() => {
+    game?.gameSetPaused(paused);
+  }, [paused]);
+
+  useEffect(() => {
+    game?.audioClass?.setAudioAttribute("volume", volume);
+  }, [volume]);
+
   // initialise game controller
   useEffect(() => {
     let g;
@@ -37,7 +49,7 @@ const ManiaCanvas = ({ songInfo, ...rest }) => {
         gameCanvas: gameRef.current,
         songInfo: songInfo,
         skin: skin,
-        initialOptions: { gameVolume: 0.1, scrollSpeed: scrollSpeed }, // test
+        initialOptions: { gameVolume: volume, scrollSpeed },
         gameScale: gameScale,
       });
       setGame(g);
@@ -46,77 +58,46 @@ const ManiaCanvas = ({ songInfo, ...rest }) => {
     // call unmount callback
     return () => {
       g?.unmountGame();
-      setGamePaused(true);
     };
   }, [gameFgRef, gameRef, songInfo]);
 
   return (
     <>
-      <div className="options">
-        {/* <button onClick={() => {}}>change song (not working yet)</button> */}
-        <div>
-          scrollSpeed{" "}
-          <button onClick={() => setScrollSpeed(scrollSpeed - 1)}>-</button>{" "}
-          {scrollSpeed}{" "}
-          <button onClick={() => setScrollSpeed(scrollSpeed + 1)}>+</button>
-        </div>
-        <button
-          onClick={() => {
-            setGamePaused(!gamePaused);
-            game?.gameTogglePausePlay();
-          }}
-        >
-          {gamePaused ? "play" : "pause"}
-        </button>
-        <div>
-          <input
-            type="checkbox"
-            checked={slanted}
-            onChange={(e) => setSlanted(e.target.checked)}
+      <div className="container">
+        <div id="stage" className={`${slanted && "slanted"}`}>
+          <canvas
+            id="playfieldBg"
+            width={gameWidth}
+            height={gameHeight}
+            ref={gameBgRef}
           />
-          slant mode
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            checked={debugMode}
-            onChange={(e) => setDebugMode(e.target.checked)}
+          <canvas
+            id="playfieldOverlay"
+            width={gameWidth}
+            height={gameHeight}
+            ref={gameFgRef}
           />
-          debug
+          <canvas
+            id="playfield"
+            width={gameWidth}
+            height={gameHeight}
+            ref={gameRef}
+          />
         </div>
       </div>
 
-      <div id="stage" className={`${slanted && "slanted"}`}>
-        <canvas
-          id="playfieldBg"
-          width={gameWidth}
-          height={gameHeight}
-          ref={gameBgRef}
-        />
-        <canvas
-          id="playfieldOverlay"
-          width={gameWidth}
-          height={gameHeight}
-          ref={gameFgRef}
-        />
-        <canvas
-          id="playfield"
-          width={gameWidth}
-          height={gameHeight}
-          ref={gameRef}
-        />
-      </div>
       <style jsx>{`
-        .options {
-          margin-bottom: 1rem;
-        }
-        #stage {
+        .container {
           height: ${gameHeight}px;
           width: ${gameWidth}px;
+        }
+        #stage {
+          width: 100%;
+          height: 100%;
           position: relative;
-          border: 1px solid black;
           box-sizing: content-box;
           transition-duration: 2000ms;
+          box-shadow: 3px 3px 44px -5px rgba(0, 0, 0, 0.5);
         }
         #stage.slanted {
           transform: matrix3d(
@@ -133,9 +114,9 @@ const ManiaCanvas = ({ songInfo, ...rest }) => {
             1,
             0,
             0,
-            -206,
+            -180,
             0,
-            1.3
+            1.35
           );
         }
         canvas {
@@ -143,6 +124,7 @@ const ManiaCanvas = ({ songInfo, ...rest }) => {
         }
         #playfieldBg {
           z-index: 1;
+          background: #343434;
         }
         #playfield {
           z-index: 2;
