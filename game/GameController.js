@@ -13,6 +13,7 @@ export class GameController {
     songInfo,
     skin,
     initialOptions,
+    gameScale = 1,
   }) {
     console.log("[GameController] initialising game...", songInfo);
     this.ready = false;
@@ -21,6 +22,8 @@ export class GameController {
     this.animationFrame;
     this.skin = skin;
     this.debug = false;
+    this.songInfo = songInfo;
+    this.gameScale = gameScale;
 
     // init game options
     this.options = new OptionsProvider(initialOptions); // init misc
@@ -61,6 +64,7 @@ export class GameController {
       canvas: this.fg,
       skin: this.skin,
       keyCount: songInfo.keys,
+      options: this.options,
     });
 
     // bind keypress events
@@ -126,13 +130,18 @@ export class GameController {
   render() {
     this.frameCount++;
     this.gameTime = Math.floor(this.audio.currentTime * 1000);
-    this.gameCtx.clearRect(0, 0, this.game.width, this.game.height);
+    this.gameCtx.clearRect(
+      0,
+      0,
+      this.game.width * this.gameScale,
+      this.game.height * this.gameScale
+    );
     this.fgCtx.clearRect(0, 0, this.fg.width, this.fg.height);
     // this.bgCtx.clearRect(0, 0, this.bg.width, this.bg.height);
 
     this.NoteFactory.draw(this.gameTime, this.debug);
     this.feedback.draw();
-    this.skin.drawJudge({ canvas: this.bg });
+    this.skin.drawJudge({ canvas: this.bg, keyCount: this.songInfo.keys });
 
     this.animationFrame = window.requestAnimationFrame(this.render.bind(this));
   }

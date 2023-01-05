@@ -3,7 +3,8 @@ import { GameController } from "../game/GameController";
 
 import { SkinProvider } from "../game/SkinProvider";
 
-const skin = new SkinProvider({});
+const gameScale = 2;
+const skin = new SkinProvider({ gameScale: 1 });
 
 const ManiaCanvas = ({ songInfo, ...rest }) => {
   const gameBgRef = useRef(null);
@@ -13,7 +14,7 @@ const ManiaCanvas = ({ songInfo, ...rest }) => {
   const [game, setGame] = useState(null);
   const [debugMode, setDebugMode] = useState(false);
   const [scrollSpeed, setScrollSpeed] = useState(10);
-  const [slanted, setSlanted] = useState(false);
+  const [slanted, setSlanted] = useState(true);
 
   const gameWidth = skin?.noteWidth * songInfo?.keys;
   const gameHeight = 640;
@@ -37,6 +38,7 @@ const ManiaCanvas = ({ songInfo, ...rest }) => {
         songInfo: songInfo,
         skin: skin,
         initialOptions: { gameVolume: 0.1, scrollSpeed: scrollSpeed }, // test
+        gameScale: gameScale,
       });
       setGame(g);
     }

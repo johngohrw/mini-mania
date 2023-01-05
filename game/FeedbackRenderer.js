@@ -1,8 +1,9 @@
 export class FeedbackRenderer {
-  constructor({ canvas, skin, keyCount }) {
+  constructor({ canvas, skin, options, keyCount }) {
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
     this.skin = skin;
+    this.options = options;
     this.keyCount = keyCount;
 
     // init activeCols to {0: false, 1: false, ...}
@@ -39,5 +40,16 @@ export class FeedbackRenderer {
         );
       }
     });
+
+    // key bindings
+    const keymap = this.options.keyMaps[this.keyCount];
+    this.context.fillStyle = "rgb(0, 0, 0)";
+    for (let i = 0; i < this.keyCount; i++) {
+      this.context.fillText(
+        keymap[i + 1],
+        this.skin.noteWidth * i + this.skin.noteWidth / 2 - 5,
+        this.canvas.height - this.skin.judgePos / 2 + this.skin.noteHeight
+      );
+    }
   }
 }
