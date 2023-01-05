@@ -18,7 +18,7 @@ export class NoteFactory {
     // renderQueue array
     this.renderQueue = Object.values(songInfo.notes);
 
-    // start/end pointers for renderable notes
+    // start pointer to begin noteRendering from
     this.renderStartPtr = 0;
     this.ptrLastUpdate = performance.now();
     this.updateInterval = 500; // interval between every renderable note update call
@@ -27,8 +27,8 @@ export class NoteFactory {
     this.updateStartPtr(0);
   }
 
-  // draw notes on canvas in-between start-end pointers.
-  draw(gameTime) {
+  // draw notes on canvas (starting from renderStartPtr)
+  draw(gameTime, debug = false) {
     for (let i = this.renderStartPtr; i < this.renderQueue.length; i++) {
       const timeStep = this.renderQueue[i];
       const arbitraryNote = timeStep[0];
@@ -62,11 +62,13 @@ export class NoteFactory {
           );
 
           // dy debug
-          this.context.fillText(
-            dy,
-            (note.col - 1) * this.skin.noteWidth,
-            notePos
-          );
+          if (debug) {
+            this.context.fillText(
+              dy,
+              (note.col - 1) * this.skin.noteWidth,
+              notePos
+            );
+          }
         });
       }
     }

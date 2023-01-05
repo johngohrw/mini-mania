@@ -1,8 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
 import { GameController } from "../game/GameController";
 import { songs } from "../data/songs";
+import { SkinProvider } from "../game/SkinProvider";
 
 let mockSongInfo = songs[3];
+const skin = new SkinProvider({});
 
 const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
   const gameBgRef = useRef(null);
@@ -10,11 +12,20 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
   const gameFgRef = useRef(null);
   const [gamePaused, setGamePaused] = useState(true);
   const [game, setGame] = useState(null);
+  const [debugMode, setDebugMode] = useState(false);
   const [scrollSpeed, setScrollSpeed] = useState(10);
+  const [slanted, setSlanted] = useState(false);
+
+  const gameWidth = skin?.noteWidth * songInfo?.keys;
+  const gameHeight = 640;
 
   useEffect(() => {
     game?.adjustOption("scrollSpeed", scrollSpeed);
   }, [scrollSpeed]);
+
+  useEffect(() => {
+    game?.set("debug", debugMode);
+  }, [debugMode]);
 
   // initialise game controller
   useEffect(() => {
@@ -25,6 +36,7 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
         bgCanvas: gameBgRef.current,
         gameCanvas: gameRef.current,
         songInfo: songInfo,
+        skin: skin,
         initialOptions: { gameVolume: 0.1, scrollSpeed: scrollSpeed }, // test
       });
       setGame(g);
@@ -40,7 +52,7 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
   return (
     <>
       <div className="options">
-        <button onClick={() => {}}>change song (not working yet)</button>
+        {/* <button onClick={() => {}}>change song (not working yet)</button> */}
         <div>
           scrollSpeed{" "}
           <button onClick={() => setScrollSpeed(scrollSpeed - 1)}>-</button>{" "}
@@ -55,25 +67,41 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
         >
           {gamePaused ? "play" : "pause"}
         </button>
+        <div>
+          <input
+            type="checkbox"
+            checked={slanted}
+            onChange={(e) => setSlanted(e.target.checked)}
+          />
+          slant mode
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            checked={debugMode}
+            onChange={(e) => setDebugMode(e.target.checked)}
+          />
+          debug
+        </div>
       </div>
 
-      <div id="stage">
+      <div id="stage" className={`${slanted && "slanted"}`}>
         <canvas
           id="playfieldBg"
-          width={game?.skin?.noteWidth * 7 || 0}
-          height={640}
+          width={gameWidth}
+          height={gameHeight}
           ref={gameBgRef}
         />
         <canvas
           id="playfieldOverlay"
-          width={game?.skin?.noteWidth * 7 || 0}
-          height={640}
+          width={gameWidth}
+          height={gameHeight}
           ref={gameFgRef}
         />
         <canvas
           id="playfield"
-          width={game?.skin?.noteWidth * 7 || 0}
-          height={640}
+          width={gameWidth}
+          height={gameHeight}
           ref={gameRef}
         />
       </div>
@@ -82,11 +110,32 @@ const ManiaCanvas = ({ songInfo = mockSongInfo, ...rest }) => {
           margin-bottom: 1rem;
         }
         #stage {
-          height: 640px;
-          width: 280px;
+          height: ${gameHeight}px;
+          width: ${gameWidth}px;
           position: relative;
           border: 1px solid black;
           box-sizing: content-box;
+          transition-duration: 2000ms;
+        }
+        #stage.slanted {
+          transform: matrix3d(
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            -0.0025,
+            0,
+            0,
+            1,
+            0,
+            0,
+            -206,
+            0,
+            1.3
+          );
         }
         canvas {
           position: absolute;

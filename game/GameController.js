@@ -6,20 +6,21 @@ import { getInverseMap } from "./notes";
 import { FeedbackRenderer } from "./FeedbackRenderer";
 
 export class GameController {
-  constructor({ bgCanvas, fgCanvas, gameCanvas, songInfo, initialOptions }) {
+  constructor({
+    bgCanvas,
+    fgCanvas,
+    gameCanvas,
+    songInfo,
+    skin,
+    initialOptions,
+  }) {
     console.log("[GameController] initialising game...", songInfo);
     this.ready = false;
     this.frameCount = 0;
     this.gameTime = 0;
     this.animationFrame;
-
-    // fps calculation vars
-    this.fps;
-    this.lastRender;
-    this.delta;
-
-    // init skin
-    this.skin = new SkinProvider({});
+    this.skin = skin;
+    this.debug = false;
 
     // init game options
     this.options = new OptionsProvider(initialOptions); // init misc
@@ -53,7 +54,6 @@ export class GameController {
       options: this.options,
       audio: this.audio,
       skin: this.skin,
-      naive: false,
     });
 
     // init feedback
@@ -114,6 +114,10 @@ export class GameController {
     this.options[key] = value;
   }
 
+  set(key, value) {
+    this[key] = value;
+  }
+
   prerender() {
     this.fgCtx.font = "normal 12pt Arial";
     this.gameCtx.font = "normal 8pt Arial";
@@ -126,7 +130,7 @@ export class GameController {
     this.fgCtx.clearRect(0, 0, this.fg.width, this.fg.height);
     // this.bgCtx.clearRect(0, 0, this.bg.width, this.bg.height);
 
-    this.NoteFactory.draw(this.gameTime);
+    this.NoteFactory.draw(this.gameTime, this.debug);
     this.feedback.draw();
     this.skin.drawJudge({ canvas: this.bg });
 
